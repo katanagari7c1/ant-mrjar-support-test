@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="test-mrjar" default="run.task" basedir=".">
+  <path id="build.classpath">
+    <fileset dir="lib">
+      <include name="*.jar" />
+    </fileset>
+    <file name="build/test.jar"/>
+  </path>
+  <path id="task.classpath">
+    <file name="build/task"/>
+    <file name="build/test.jar"/>
+  </path>
+
+  <echo>${ant.version}</echo>
+  <echo>Running with Java version: ${ant.java.version}</echo>
+
+  <target name="build.mrjar">
+    <exec executable="/bin/bash">
+      <arg value="create-mrjar.sh"/>
+    </exec>
+  </target>
+
+  <target name="build.task" depends="build.mrjar">
+    <mkdir dir="build/task"/>
+    <javac srcdir="src-ant/org/example/task" includes="TestTask.java" destdir="build/task" fork="true" encoding="UTF-8" includeantruntime="false">
+      <classpath refid="build.classpath"/>
+    </javac>
+  </target>
+
+  <target name="run.task" description="Run a custom ant task which requires a multi-release jar as a dependency" depends="build.task">
+    <taskdef name="testTask" classname="org.example.task.TestTask">
+      <classpath refid="task.classpath"/>
+    </taskdef>
+    <testTask/>
+  </target>
+</project>
