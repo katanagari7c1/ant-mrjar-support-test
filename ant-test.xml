@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="test-mrjar" default="run.task" basedir=".">
-  <path id="build.classpath">
-    <fileset dir="lib">
-      <include name="*.jar" />
-    </fileset>
-    <file name="build/test.jar"/>
-  </path>
-  <path id="task.classpath">
-    <file name="build/task"/>
-    <file name="build/test.jar"/>
-  </path>
-
   <echo>${ant.version}</echo>
   <echo>Running with Java version: ${ant.java.version}</echo>
 
@@ -23,14 +12,40 @@
   <target name="build.task" depends="build.mrjar">
     <mkdir dir="build/task"/>
     <javac srcdir="src-ant/org/example/task" includes="TestTask.java" destdir="build/task" fork="true" encoding="UTF-8" includeantruntime="false">
-      <classpath refid="build.classpath"/>
+      <classpath>
+        <fileset dir="lib">
+          <include name="*.jar" />
+        </fileset>
+        <file name="build/test.jar"/>
+      </classpath>
     </javac>
   </target>
 
-  <target name="run.task" description="Run a custom ant task which requires a multi-release jar as a dependency" depends="build.task">
+  <target name="build.java" depends="build.mrjar">
+    <mkdir dir="build/java"/>
+    <javac srcdir="src-ant/org/example/java" includes="TestJava.java" destdir="build/java" fork="true" encoding="UTF-8" includeantruntime="false">
+      <classpath>
+        <file name="build/test.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="run.task" description="Run a custom ant task which requires a multi-release jar as a dependency" depends="build.task, build.java">
     <taskdef name="testTask" classname="org.example.task.TestTask">
-      <classpath refid="task.classpath"/>
+      <classpath>
+        <file name="build/task"/>
+        <file name="build/test.jar"/>
+      </classpath>
     </taskdef>
     <testTask/>
+    <echo>========================================</echo>
+    <echo>Now using the same jar in a jvm process</echo>
+    <echo>========================================</echo>
+    <java classname="org.example.java.TestJava" fork="true" failonerror="true">
+      <classpath>
+        <file name="build/java"/>
+        <file name="build/test.jar"/>
+      </classpath>
+    </java>
   </target>
 </project>
