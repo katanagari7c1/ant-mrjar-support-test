@@ -10,8 +10,8 @@ then it compiles a TestTask class that uses this jar and executes it as an ant t
 
 In the output you should see something similar of the following:
 ```
-Buildfile: /home/user/ant-mrjar-support-test/ant-test.xml
-     [echo] Apache Ant(TM) version 1.10.3 compiled on July 19 2018
+Buildfile: /home/user/Projects/ant-mrjar-support-test/ant-test.xml
+     [echo] Apache Ant(TM) version 1.10.5 compiled on July 10 2018
      [echo] Running with Java version: 11
 
 build.mrjar:
@@ -26,15 +26,23 @@ build.mrjar:
      [exec] adding: META-INF/versions/9/org/example/Test.class(in = 432) (out= 314)(deflated 27%)
 
 build.task:
-    [javac] Compiling 1 source file to /home/user/ant-mrjar-support-test/build/task
+    [javac] Compiling 1 source file to /home/user/Projects/ant-mrjar-support-test/build/task
+
+build.java:
+    [javac] Compiling 1 source file to /home/user/Projects/ant-mrjar-support-test/build/java
 
 run.task:
  [testTask] Executing Java8 Task
+     [echo] ========================================
+     [echo] Now using the same jar in a jvm process
+     [echo] ========================================
+     [java] Executing Java9+ Task. MRJAR is supported!
 
 BUILD SUCCESSFUL
 Total time: 2 seconds
 ```
 
-In this execution we can see we're running ant 1.10.3 with Java 11, however
+In this execution we can see we're running ant 1.10.5 with Java 11, however
 the ant classloader loads the Java 8 version of Test.class in the jar instead
-of the one included for Java 9+. 
+of the one included for Java 9+. Meanwhile the JVM process loads the correct version
+of Test.class.
